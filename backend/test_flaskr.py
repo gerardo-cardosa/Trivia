@@ -269,6 +269,14 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['question'])
 
+    def test_get_quizz_no_json(self):
+        res = self.client().post('/quizzes')
+        data = json.loads(res.data)
+
+        # assertions
+        self.assertEqual(res.status_code, 422)
+        
+
 
 
 # Make the tests conveniently executable

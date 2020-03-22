@@ -5,7 +5,7 @@ This app is composed of two parts:
 1. The front end
 2. The back end
 
-## The fron end 
+## The Fronend 
 
 The `./frontend` is a React based website. Follow the next instructions to run it
 
@@ -53,3 +53,117 @@ npm start
  random order. 
 
 
+## The Backend
+The `./backend` is a Flask based python app. 
+
+### Requirements
+
+
+## API Documentation
+
+### Questions
+General Path:  "/questions"
+
+#### GET
+This will return all the questions in set of 10 items. 
+
+To paginate, a 'page=int' query parameter may be added to get other pages. 
+"/questions?page=2"
+
+##### Returned value
+This method will return a json with the following structure:
+{
+    "status": 200,
+    "success": true,
+    "categories": ["Science" , "art"],
+    "currentCategory": "",
+    "totalQuestions": 1,
+    "questions": [
+        {
+        "answer": "Escher",
+        "category": "2",
+        "difficulty": 1,
+        "id": 16,
+        "question": "Which Dutch graphic artist-initials M C was a creator of optical illusions?"
+        }
+    ]      
+}
+
+
+#### POST
+
+##### Search
+When sending a json payload containing the property "searchTerm", this method will return a list of questions
+based on the searched term. If no questions were found, the returned object will contained an empty "questions" list. 
+
+##### Add
+If the method is called and instead contains the below payload, a new question will be added. 
+{
+    "question" = "Who completed this quizz?"
+    "answer" = "Me"
+    "category" = "1"
+    "difficulty" = "4"
+}
+
+If something goes wrong, like sending an invalid category, the method will return a 422 error. 
+
+#### Delete
+Path: "/questions/<int:id>"
+
+If the deletion was successfull, the endpoint will retun a 200 with this json { "success": true}
+However, if something goes wrong, it will return a 422 error. 
+And if the question id doesn't exists, a 404 error will be return.
+
+### Categories
+Path "/categories"
+
+#### Get
+This endpoint will get all the available categories in a json like:
+{
+  "categories": [
+    "Science",
+    "Art",
+    "Geography",
+    "History",
+    "Entertainment",
+    "Sports"
+  ],
+  "success": true
+}
+
+#### Questions from categories
+Path: "/categories/<int:id>/questions"
+
+This endpoint will return all the questions related to a specific category. The return object will be like what the Questions Get method returns. 
+If an invalid id is given, the returned object will have an empty questions list. 
+
+### Quizzes
+Path: "/quizzes'
+
+#### Post
+This method will require a json as follows:
+{
+    "previous_questions": [],
+    "quiz_category" : {
+        "id":"1",
+        "type":"Science"
+    }
+}
+
+The "previous_questions" contains the id of the questions already asked. 
+The "quiz_category" porperty, will be the reference for the kind of questions the endpoint will return. In this case, it would be Science. 
+
+##### Response
+This endpoint will return a random question from the category selected. If no category was selectec, this will take all the questions in consideration. 
+The response will contain a question that wasn't asked before. 
+
+The returned object has this form:
+{
+    "question": {
+       'id': 1,
+            'question': "Is this a hard question?",
+            'answer': "yes",
+            'category': "1",
+            'difficulty': 5
+        }
+      }
