@@ -94,7 +94,7 @@ def create_app(test_config=None):
     if not search == None:
       query = query.filter(Question.question.ilike('%{}%'.format(search)))
 
-    questions = query.order_by(Question.id).all()
+    questions = query.order_by(Question.difficulty).all()
     response['totalQuestions'] = len(questions)
 
     formatted_questions = [question.format() for question in questions]
