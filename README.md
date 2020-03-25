@@ -239,4 +239,5 @@ SO - https://stackoverflow.com/a/27939619
 Udacity - https://classroom.udacity.com/nanodegrees/nd0044/parts/838df8a7-4694-4982-a9a5-a5ab20247776/modules/afbae13a-a91a-4d5e-9f98-4fe13c415f7a/lessons/37cec828-a108-4013-96e7-645495aed9a0/concepts/56008375-e597-42db-92e9-60e40b0c99b9?bounced=1584417281829
 Python Randon numbers - https://www.geeksforgeeks.org/random-numbers-in-python/
 Python in line for loop - https://stackoverflow.com/a/27411654
+Python value in array - https://stackoverflow.com/a/7571665
         
