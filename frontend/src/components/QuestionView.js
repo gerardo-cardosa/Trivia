@@ -54,7 +54,6 @@ class QuestionView extends Component {
     let pageNumbers = [];
     let maxPage = Math.ceil(this.state.totalQuestions / 10)
     console.log('max page ====',this.state.totalQuestions)
-    console.log('Curr Cat: ', this.state.currentCategory)
     for (let i = 1; i <= maxPage; i++) {
       pageNumbers.push(
         <span

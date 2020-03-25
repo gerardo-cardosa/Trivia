@@ -21,8 +21,7 @@ def create_app(test_config=None):
   '''
   @Complete: Use the after_request decorator to set Access-Control-Allow
   '''
-# SO - https://stackoverflow.com/a/27939619
-# Udacity - https://classroom.udacity.com/nanodegrees/nd0044/parts/838df8a7-4694-4982-a9a5-a5ab20247776/modules/afbae13a-a91a-4d5e-9f98-4fe13c415f7a/lessons/37cec828-a108-4013-96e7-645495aed9a0/concepts/56008375-e597-42db-92e9-60e40b0c99b9?bounced=1584417281829
+
   @app.after_request
   def after_request(response):
     response.headers.add('Access-Controll-Allow-Headers'
@@ -100,7 +99,6 @@ def create_app(test_config=None):
     if category is not None:
       query = query.filter(Question.category == '{}'.format(category))
       response['current_category'] = category
-      print('Current Cat', response['current_category'])
     
     # Filtering by a search term. This is case insensitive (ilike)
     if search is not None:
@@ -116,7 +114,6 @@ def create_app(test_config=None):
     # In case of pagination, this line will select the related items
     response['questions'] = formatted_questions[start: end ]
     
-    print(response['totalQuestions'])
     return response
 
   '''
