@@ -25,8 +25,10 @@ def create_app(test_config=None):
 # Udacity - https://classroom.udacity.com/nanodegrees/nd0044/parts/838df8a7-4694-4982-a9a5-a5ab20247776/modules/afbae13a-a91a-4d5e-9f98-4fe13c415f7a/lessons/37cec828-a108-4013-96e7-645495aed9a0/concepts/56008375-e597-42db-92e9-60e40b0c99b9?bounced=1584417281829
   @app.after_request
   def after_request(response):
-    response.headers.add('Access-Controll-Allow-Headers','Content-Type, Authorization')
-    response.headers.add('Access-Controll-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS')
+    response.headers.add('Access-Controll-Allow-Headers'
+                         ,'Content-Type, Authorization')
+    response.headers.add('Access-Controll-Allow-Methods'
+                         , 'GET, POST, PATCH, DELETE, OPTIONS')
     return response
 
   '''
@@ -64,42 +66,57 @@ def create_app(test_config=None):
   def questionsGet():
     page = request.args.get('page', 1, type=int)
     try:
+
+      # Calling the "questionsHelper" with page and no category
       response = questionsHelper(page=page, category=None)
       return jsonify(response)
     except:
       abort(422)
         
-  # This method will be used by other Question related endpoints. 
+  '''
+  This method will be used by other Question related endpoints. 
+  '''
   def questionsHelper(page=1, category=None, search=None):
     page_zise = 10
     start = (page - 1)* page_zise
     end = start + page_zise
 
+    # Creating the response object
     response ={
       "success":True,
       "status": 200,
       "questions": [],
       "totalQuestions": 0,
-      "categories" : [ category.type for category in Category.query.all()],
-      "currentCategory" : ''
+      "categories" : [ category.type for category 
+           in Category.query.all()],
+      "current_category" : ''
     }
 
+    # Creating the query object that will be modified depending on the
+    # arguments passed when calling the method. 
     query = Question.query
 
     # Filter by category
-    if not category == None:
+    if category is not None:
       query = query.filter(Question.category == '{}'.format(category))
-      response['currentCategory'] = category
+      response['current_category'] = category
+      print('Current Cat', response['current_category'])
     
-    if not search == None:
-      query = query.filter(Question.question.ilike('%{}%'.format(search)))
+    # Filtering by a search term. This is case insensitive (ilike)
+    if search is not None:
+      query = query.filter(Question.question.ilike('%{}%'.format(
+           search)))
 
     questions = query.order_by(Question.difficulty).all()
     response['totalQuestions'] = len(questions)
 
-    formatted_questions = [question.format() for question in questions]
+    # This line creates the question array that will be returned in the response
+    formatted_questions = [question.format() for question 
+        in questions]
+    # In case of pagination, this line will select the related items
     response['questions'] = formatted_questions[start: end ]
     
+    print(response['totalQuestions'])
     return response
 
   '''
@@ -111,8 +128,10 @@ def create_app(test_config=None):
   '''
   @app.route('/questions/<int:question_id>', methods=['DELETE'])
   def questionDelete(question_id):
-    question = Question.query.filter(Question.id == question_id).one_or_none()
+    question = Question.query.filter(
+         Question.id == question_id).one_or_none()
 
+    # If the id doesn't exist, the endpoint will return a 404 Not Found error
     if question == None:
       abort(404)
 
@@ -136,7 +155,9 @@ def create_app(test_config=None):
   the form will clear and the question will appear at the end of the last page
   of the questions list in the "List" tab.  
   '''
-
+  # This enpoint will be used for two scenarios:
+  # 1. Searching 
+  # 2. Adding questions
   @app.route('/questions', methods=['POST'])
   def questionsPOST():
     body = request.get_json()
@@ -147,13 +168,16 @@ def create_app(test_config=None):
     category = body.get('category', None)
     difficulty = body.get('difficulty', None)
 
+    # If the request contains a "searchItem" element, then
+    # the endpoint will return the questions that contain
+    # that "searchItem"
     if searchTerm:
       try:
         return jsonify(questionsHelper(page=1, search=searchTerm ))
       except:
         abort(422)
       
-
+    # Otherwise the endpoint will handle the request as a "Create Question"
     else:
       newQuestion = Question(
         question = question,
@@ -179,7 +203,7 @@ def create_app(test_config=None):
   only question that include that string within their question. 
   Try using the word "title" to start. 
   '''
-  # Complete, this is part of the questionsPOST method a both adding a new questions
+  # Complete, this is part of the "questionsPOST" method a both adding a new questions
   # and searching for a question send a POST request. Both send the same result format
 
   '''
@@ -225,18 +249,27 @@ def create_app(test_config=None):
         quiz_category_id = quiz_category.get("id", None)
         quiz_category_type = quiz_category.get("type", None)
 
+      # Creating the query object
       question_query = Question.query
-      category = Category.query.filter(Category.type == quiz_category_type).one_or_none()
+      category = Category.query.filter(
+           Category.type == quiz_category_type).one_or_none()
 
+      # If the category exists, the query will filter the questions by that 
+      # category. Otherwise, it will use all the categories. 
       if category:
-        question_query = question_query.filter(Question.category == '{}'.format(category.id))
+        question_query = question_query.filter(
+            Question.category == '{}'.format(category.id))
 
+      # This line will query only the questions that are not present in the 
+      # previous_questions array so users are not presented with the same question again
+      questions = question_query.filter(
+            ~Question.id.in_(previous_questions)).all()
 
-      questions = question_query.filter(~Question.id.in_(previous_questions)).all()
-
+      # The game will end if the are no more questions or if the user ansered 5.
       if len(questions) == 0 or len(previous_questions) >= 5:
         return {}
 
+      # From the list of questions, this line will select the next one randomnly
       random_id = random.randint(0, len(questions)-1) 
       response = {
         "question": questions[random_id].format()

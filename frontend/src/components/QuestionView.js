@@ -41,13 +41,20 @@ class QuestionView extends Component {
   }
 
   selectPage(num) {
-    this.setState({page: num}, () => this.getQuestions());
+
+    if(this.state.currentCategory > 0){
+      this.setState({page: num}, () => this.getByCategory(this.state.currentCategory-1));
+    }
+    else{
+      this.setState({page: num}, () => this.getQuestions());
+    }
   }
 
   createPagination(){
     let pageNumbers = [];
     let maxPage = Math.ceil(this.state.totalQuestions / 10)
-    console.log('max page ====',this.state)
+    console.log('max page ====',this.state.totalQuestions)
+    console.log('Curr Cat: ', this.state.currentCategory)
     for (let i = 1; i <= maxPage; i++) {
       pageNumbers.push(
         <span
@@ -61,12 +68,12 @@ class QuestionView extends Component {
 
   getByCategory= (id) => {
     $.ajax({
-      url: `/categories/${parseInt(id)+1}/questions`, //TODO: update request URL
+      url: `/categories/${parseInt(id)+1}/questions?page=${this.state.page}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
         this.setState({
           questions: result.questions,
-          totalQuestions: result.total_questions,
+          totalQuestions: result.totalQuestions,
           currentCategory: result.current_category })
         return;
       },
@@ -91,7 +98,7 @@ class QuestionView extends Component {
       success: (result) => {
         this.setState({
           questions: result.questions,
-          totalQuestions: result.total_questions,
+          totalQuestions: result.totalQuestions,
           currentCategory: result.current_category })
         return;
       },
