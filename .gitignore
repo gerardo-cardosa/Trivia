@@ -4,3 +4,4 @@ backend/__pycache__
 backend/flaskr/__pycache__
 env/
 venv/
+*.pyc

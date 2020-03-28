@@ -60,19 +60,15 @@ def create_app(test_config=None):
     @app.route('/questions')
     def questionsGet():
         page = request.args.get('page', 1, type=int)
-        try:
-            # Calling the "questionsHelper" with page and no category
-            response = questionsHelper(page=page, category=None)
-            return jsonify(response)
-        except:
-            abort(422)
+        # Calling the "questionsHelper" with page and no category
+        response = questionsHelper(page=page, category=None)
+        return jsonify(response)
 
     ''' This method will be used by other Question related endpoints.
     '''
     def questionsHelper(page=1, category=None, search=None):
-        page_zise = 10
-        start = (page - 1) * page_zise
-        end = start + page_zise
+        start = (page - 1) * QUESTIONS_PER_PAGE
+        end = start + QUESTIONS_PER_PAGE
 
         # Creating the response object
         response = {
@@ -100,6 +96,10 @@ def create_app(test_config=None):
                 '%{}%'.format(search)))
 
         questions = query.order_by(Question.difficulty).all()
+        # Abort if the page is longer than the total questions
+        if len(questions) < start:
+            abort(404)
+
         response['totalQuestions'] = len(questions)
 
         # This line creates the question array that will be returned
@@ -205,12 +205,8 @@ def create_app(test_config=None):
     @app.route('/categories/<int:category_id>/questions')
     def categoriesGetQuestions(category_id):
         page = request.args.get('page', 1, type=int)
-
-        try:
-            response = questionsHelper(page=page, category=category_id)
-            return jsonify(response)
-        except:
-            abort(422)
+        response = questionsHelper(page=page, category=category_id)
+        return jsonify(response)
 
     ''' @Complete: Create a POST endpoint to get questions to play the quiz.
         This endpoint should take category and previous question parameters
@@ -255,7 +251,7 @@ def create_app(test_config=None):
 
             # The game will end if the aren't questions or if the user did 5.
             if len(questions) == 0 or len(previous_questions) >= 5:
-                return None
+                return jsonify({})
 
             # This line will select the next question randomnly
             random_id = random.randint(0, len(questions)-1)
@@ -269,6 +265,13 @@ def create_app(test_config=None):
     ''' @Complete: Create error handlers for all expected errors
         including 404 and 422.
     '''
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({
+            "success": False,
+            "error": 404,
+            "message": "Item not found"
+        }), 404
 
     @app.errorhandler(422)
     def unable_to_process(error):
@@ -277,13 +280,5 @@ def create_app(test_config=None):
             "error": 422,
             "message": "Something went wrong"
         }), 422
-
-    @app.errorhandler(404)
-    def not_found(error):
-        return jsonify({
-            "success": False,
-            "error": 404,
-            "message": "Item not found"
-        }), 404
 
     return app

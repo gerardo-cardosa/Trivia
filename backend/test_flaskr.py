@@ -17,9 +17,9 @@ class TriviaTestCase(unittest.TestCase):
         """Define test variables and initialize app."""
         self.app = create_app()
         self.client = self.app.test_client
-        self.database_name = "trivia_test"
-        self.database_user = "postgres"
-        self.database_password = "#Palomis1"
+        self.database_name = ""
+        self.database_user = ""
+        self.database_password = ""
         self.database_path = "postgres://{}:{}@{}/{}".format(self.database_user,self.database_password,'localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
 
@@ -70,13 +70,13 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertLessEqual(len(data['questions']), 10)
 
-    def test_400_pagination_get_questions(self):
+    def test_404_pagination_get_questions(self):
         res = self.client().get('/questions?page=1000')
         data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 200)
-        self.assertEqual(data['success'], True)
-        self.assertEqual(len(data['questions']), 0)
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertFalse(data.get('questions', False))
 
     def test_search_question(self):
         res = self.client().post('/questions', json={'searchTerm': 'Tom'})
@@ -104,16 +104,31 @@ class TriviaTestCase(unittest.TestCase):
         self.assertLessEqual(len(data['questions']), 10)
         self.assertEqual(data['questions'][0]['category'], 1)
 
-    def test_get_questions_category_page(self):
+    def test_get_questions_invalid_category(self):
         # Science category
         res = self.client().get('/categories/10/questions')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertEqual(len(data['questions']), 0)
+        self.assertFalse(data.get('questions', False))
 
+    def test_get_questions_category_page(self):
+        # Science category
+        res = self.client().get('/categories/1/questions?page=1')
+        data = json.loads(res.data)
 
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertLessEqual(len(data['questions']), 10)
+        self.assertEqual(data['questions'][0]['category'], 1)
+
+    def test_get_questions_category_page(self):
+        # Science category
+        res = self.client().get('/categories/1/questions?page=3000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
 
     def test_add_question(self):
         questionsBefore = len(Question.query.all())
@@ -126,7 +141,7 @@ class TriviaTestCase(unittest.TestCase):
         questionsAfter = len(Question.query.all())
         self.assertEqual(questionsBefore + 1, questionsAfter)
 
-    def test_400_add_question(self):
+    def test_422_add_question(self):
         self.newQuestion['category'] = 2002
         questionsBefore = len(Question.query.all())
 
@@ -155,7 +170,7 @@ class TriviaTestCase(unittest.TestCase):
 
     
     
-    def test_400_delete_question(self):
+    def test_404_delete_question(self):
         total_questions_before = len(Question.query.all())
         res = self.client().delete('/questions/10000')
         data = json.loads(res.data)
