@@ -198,27 +198,27 @@ curl http://127.0.0.1/5000/questions
 2. Sample: 
 
 ```bash 
-curl http://127.0.0.1/5000/questions -X POST -H "Content-type: applicationjson" -d '{
+curl http://127.0.0.1/5000/questions -X POST -H "Content-type: application/json" -d '{
     "question" = "Who completed this quizz?",
     "answer" = "Me",
     "category" = "1",
     "difficulty" = "4"
 }'
 ```
-If something goes wrong, like sending an invalid category, the method will return a 422 error. 
 
-#### Delete
-Path: "/questions/<int:id>"
+#### Delete /questions/{question_id}
 
-If the deletion was successfull, the endpoint will retun a 200 with this json { "success": true}
-However, if something goes wrong, it will return a 422 error. 
-And if the question id doesn't exists, a 404 error will be return.
+1. General: Deletes the questions of the given ID if it exists. Return the id of the deleted question and a success value. 
 
-### Categories
-Path "/categories"
+2. Example curl -X DELETE http://127.0.0.1:5000/questions/1
 
-#### Get
-This endpoint will get all the available categories in a json like:
+
+#### Get /categories
+
+1. General: This endpoint will return a categories list and a success value. 
+
+2. Sample: curl http://127.0.0.1:5000/categories
+```
 {
   "categories": [
     "Science",
@@ -230,18 +230,25 @@ This endpoint will get all the available categories in a json like:
   ],
   "success": true
 }
+```
 
-#### Questions from categories
-Path: "/categories/<int:id>/questions"
+#### Get /categories/{category_id}>/questions
 
-This endpoint will return all the questions related to a specific category. The return object will be like what the Questions Get method returns. 
-If an invalid id is given, the returned object will have an empty questions list. 
+1. General: This endpoint will return a JSON object similar to the GET /questions where the listo of questions will be from the selected category ID.  
 
-### Quizzes
-Path: "/quizzes'
+2. The endpoint includes a request argument to choose the page number, starting from 1.
 
-#### Post
-This method will require a json as follows:
+3. Sample: curl http://127.0.0.1:5000/categories/1/questions?page=1
+
+
+### Post /quizzes
+
+1. General: This endpoint will expect a JSON object containing a list of previous questions, a quizz category that has the category ID and type.
+2. The endpoint will return the next question based on the category. This endpoint won't retunr a question that was already returned. 
+
+3. Sample: 
+```bash
+curl -X POST http://127.0.0.1:5000:quizzes -H "Content-type: application/json" -d 
 {
     "previous_questions": [],
     "quiz_category" : {
@@ -250,23 +257,18 @@ This method will require a json as follows:
     }
 }
 
-The "previous_questions" contains the id of the questions already asked. 
-The "quiz_category" porperty, will be the reference for the kind of questions the endpoint will return. In this case, it would be Science. 
-
-##### Response
-This endpoint will return a random question from the category selected. If no category was selectec, this will take all the questions in consideration. 
-The response will contain a question that wasn't asked before. 
-
-The returned object has this form:
-{
-    "question": {
-       'id': 1,
-            'question': "Is this a hard question?",
-            'answer': "yes",
-            'category': "1",
-            'difficulty': 5
-        }
-      }
+```
+4. Response
+```
+{ question: {
+    "id": 1,
+    "question": "What is this?",
+    "answer": "Nothing",
+    "category": 1,
+    "difficulty": 5
+    }
+}
+```
 
 
 ## Reference used:
