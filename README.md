@@ -153,7 +153,7 @@ The API will return two kinds of errors:
 
 1. General
 
-This endpoint will return a result object containing:
+    This endpoint will return a result object containing:
 
 1. status
 2. success value
