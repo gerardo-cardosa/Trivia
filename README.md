@@ -195,7 +195,10 @@ curl http://127.0.0.1/5000/questions
     1. This endpoint will search books when seding a JSON object containing "searchTerm". If no questions were found, the returned object will contained an empty "questions" list.
     2. Creates a new questions using the submitted question, answer, category, difficulty. 
 
-2. Sample: ```bash curl http://127.0.0.1/5000/questions -X POST -H "Content-type: applicationjson" -d '{
+2. Sample: 
+
+```bash 
+curl http://127.0.0.1/5000/questions -X POST -H "Content-type: applicationjson" -d '{
     "question" = "Who completed this quizz?",
     "answer" = "Me",
     "category" = "1",
