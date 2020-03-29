@@ -155,18 +155,18 @@ The API will return two kinds of errors:
 
     This endpoint will return a result object containing:
 
-        1. status
-        2. success value
-        3. a list of categories
-        4. current category
-        5. total number of questions
-        6. a list of questions. 
+    1. status
+    2. success value
+    3. a list of categories
+    4. current category
+    5. total number of questions
+    6. a list of questions. 
 
-The list of questions is paginated in groups og 10. 
-The endpoint includes a request argument to choose the page number, starting from 1. 
+    The list of questions is paginated in groups og 10. 
+    The endpoint includes a request argument to choose the page number, starting from 1. 
 
 2. Sample: curl http://127.0.0.1/5000/questions
-
+```
 {
     "status": 200,
     "success": true,
@@ -183,7 +183,7 @@ The endpoint includes a request argument to choose the page number, starting fro
         }
     ]      
 }
-
+```
 
 #### POST /questions
 
