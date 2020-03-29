@@ -124,8 +124,23 @@ Setting the `FLASK_ENV` variable to `development` will detect file changes and r
 Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` directory and the `__init__.py` file to find the application.
 
 
-## API Documentation
+## API Reference
 
+### Getting Started
+
+Base URL: This app can be run locally and is not hosted as a base URL. The backend is 
+hosted at: http://127.0.0.1:5000/ This is set as a proxy in the frontend configuration. 
+
+### Error Handling
+
+Errors are returned as JSON objest in the below format:
+'''
+{
+    "success": False,
+    "eror": 404,
+    "message": "Not found"
+}
+'''
 ### Questions
 General Path:  "/questions"
 
