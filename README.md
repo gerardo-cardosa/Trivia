@@ -134,13 +134,13 @@ hosted at: http://127.0.0.1:5000/ This is set as a proxy in the frontend configu
 ### Error Handling
 
 Errors are returned as JSON objest in the below format:
-'''
+```
 {
     "success": False,
     "eror": 404,
     "message": "Not found"
 }
-'''
+```
 ### Questions
 General Path:  "/questions"
 
