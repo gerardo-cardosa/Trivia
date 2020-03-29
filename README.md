@@ -147,18 +147,26 @@ The API will return two kinds of errors:
 1. 404: Not found
 2. 422: Not Processable
 
+### Endpoints
 
-### Questions
-General Path:  "/questions"
+#### GET /questions
 
-#### GET
-This will return all the questions in set of 10 items. 
+1. General
 
-To paginate, a 'page=int' query parameter may be added to get other pages. 
-"/questions?page=2"
+This endpoint will return a result object containing:
 
-##### Returned value
-This method will return a json with the following structure:
+1. status
+2. success value
+3. a list of categories
+4. current category
+5. total number of questions
+6. a list of questions. 
+
+The list of questions is paginated in groups og 10. 
+The endpoint includes a request argument to choose the page number, starting from 1. 
+
+2. Sample: curl http://127.0.0.1/5000/questions
+
 {
     "status": 200,
     "success": true,
@@ -177,20 +185,19 @@ This method will return a json with the following structure:
 }
 
 
-#### POST
+#### POST /questions
 
-##### Search
-When sending a json payload containing the property "searchTerm", this method will return a list of questions
-based on the searched term. If no questions were found, the returned object will contained an empty "questions" list. 
+1. General
 
-##### Add
-If the method is called and instead contains the below payload, a new question will be added. 
-{
-    "question" = "Who completed this quizz?"
-    "answer" = "Me"
-    "category" = "1"
+    1. This endpoint will search books when seding a JSON object containing "searchTerm". If no questions were found, the returned object will contained an empty "questions" list.
+    2. Creates a new questions using the submitted question, answer, category, difficulty. 
+
+2. Sample: curl http://127.0.0.1/5000/questions -X POST -H "Content-type: applicationjson" -d '{
+    "question" = "Who completed this quizz?",
+    "answer" = "Me",
+    "category" = "1",
     "difficulty" = "4"
-}
+}'
 
 If something goes wrong, like sending an invalid category, the method will return a 422 error. 
 
