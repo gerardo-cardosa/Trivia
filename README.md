@@ -232,7 +232,7 @@ curl http://127.0.0.1/5000/questions -X POST -H "Content-type: application/json"
 }
 ```
 
-#### Get /categories/{category_id}>/questions
+#### Get /categories/{category_id}/questions
 
 1. General: This endpoint will return a JSON object similar to the GET /questions where the listo of questions will be from the selected category ID.  
 
