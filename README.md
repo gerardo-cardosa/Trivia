@@ -281,4 +281,7 @@ Python Randon numbers - https://www.geeksforgeeks.org/random-numbers-in-python/
 Python in line for loop - https://stackoverflow.com/a/27411654
 
 Python value in array - https://stackoverflow.com/a/7571665
-        
+
+PEP8 checker - http://pep8online.com/
+
+PEP8 Style guide - https://www.python.org/dev/peps/pep-0008/
