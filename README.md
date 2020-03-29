@@ -165,7 +165,9 @@ The API will return two kinds of errors:
     The list of questions is paginated in groups og 10. 
     The endpoint includes a request argument to choose the page number, starting from 1. 
 
-2. Sample: ```bash curl http://127.0.0.1/5000/questions```
+2. Sample: ```bash 
+curl http://127.0.0.1/5000/questions
+```
 ```
 {
     "status": 200,
